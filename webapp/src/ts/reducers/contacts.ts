@@ -55,7 +55,12 @@ const orderBy = (c1, c2) => {
     return c1Type < c2Type ? -1 : 1;
   }
 
-  return (c1.name || '').toLowerCase() < (c2.name || '').toLowerCase() ? -1 : 1;
+  const name1 = (c1.name || '').toLowerCase();
+  const name2 = (c2.name || '').toLowerCase();
+  if (name1 === name2) {
+    return 0;
+  }
+  return name1 < name2 ? -1 : 1;
 };
 
 const updateContacts = (state, newContacts) => {
@@ -72,7 +77,7 @@ const updateContacts = (state, newContacts) => {
 };
 
 const removeContact = (state, contact) => {
-  const contacts = [ ...state.contacts];
+  const contacts = [...state.contacts];
   const contactsById = new Map(state.contactsById);
 
   const list = new UniqueSortedList(contacts, contactsById, orderBy);
@@ -130,7 +135,7 @@ const updateSelectedContactsTasks = (state, tasks) => {
     });
     return { ...group, contacts };
   });
-  return { ...state, selected: { ...state.selected, tasks: mappedTasks, children }};
+  return { ...state, selected: { ...state.selected, tasks: mappedTasks, children } };
 };
 
 const receiveSelectedContactTargetDoc = (state, targetDoc) => {
@@ -148,18 +153,18 @@ const _contactsReducer = createReducer(
   on(Actions.removeContactFromList, (state, { payload: { contact } }) => removeContact(state, contact)),
   on(Actions.setSelectedContact, (state, { payload: { selected } }) => setSelectedContact(state, selected)),
   on(Actions.setLoadingSelectedContact, (state) => setLoadingSelectedContact(state)),
-  on(Actions.setContactsLoadingSummary, (state, { payload: { value }}) => setContactsLoadingSummary(state, value)),
-  on(Actions.receiveSelectedContactChildren, (state, { payload: { children }}) => {
+  on(Actions.setContactsLoadingSummary, (state, { payload: { value } }) => setContactsLoadingSummary(state, value)),
+  on(Actions.receiveSelectedContactChildren, (state, { payload: { children } }) => {
     return receiveSelectedContactChildren(state, children);
   }),
-  on(Actions.receiveSelectedContactReports, (state, { payload: { reports }}) => {
+  on(Actions.receiveSelectedContactReports, (state, { payload: { reports } }) => {
     return receiveSelectedContactReports(state, reports);
   }),
-  on(Actions.updateSelectedContactSummary, (state, { payload: { summary }}) => {
+  on(Actions.updateSelectedContactSummary, (state, { payload: { summary } }) => {
     return updateSelectedContactSummary(state, summary);
   }),
-  on(Actions.updateSelectedContactsTasks, (state, { payload: { tasks }}) => updateSelectedContactsTasks(state, tasks)),
-  on(Actions.receiveSelectedContactTargetDoc, (state, { payload: { targetDoc }}) => {
+  on(Actions.updateSelectedContactsTasks, (state, { payload: { tasks } }) => updateSelectedContactsTasks(state, tasks)),
+  on(Actions.receiveSelectedContactTargetDoc, (state, { payload: { targetDoc } }) => {
     return receiveSelectedContactTargetDoc(state, targetDoc);
   }),
 );
